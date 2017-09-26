@@ -20,7 +20,7 @@ public class Landscapes implements Game {
     /**
      * Scale of the renderer text.
      */
-    private static final float TEXT_SCALE = 0.08f;
+    private static final float TEXT_SCALE = 0.04f;
 
     /**
      * Size of the terrain.
