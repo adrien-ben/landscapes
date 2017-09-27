@@ -17,5 +17,5 @@ void main() {
     } else {
         color = vec3(1.0, 1.0, 1.0);
     }
-    finalColor = vec4(vec3(color), 1.0);
+    finalColor = vec4(vec3(color*passHeight), 1.0);
 }

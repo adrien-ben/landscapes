@@ -8,5 +8,5 @@ out float passHeight;
 
 void main() {
     passHeight = vPosition.y;
-    gl_Position = uVP*vec4(vPosition.x, vPosition.y*10, vPosition.zw);
+    gl_Position = uVP*vec4(vPosition.x, vPosition.y*20, vPosition.zw);
 }
