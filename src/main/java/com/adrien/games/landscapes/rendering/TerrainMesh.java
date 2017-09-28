@@ -136,6 +136,44 @@ public class TerrainMesh {
      * @param map The height map from which to generate the mesh.
      */
     public TerrainMesh(final HeightMap map) {
+        this.polygonCount = (map.getWidth() - 1) * (map.getDepth() - 1) * 2;
+
+        this.vao = GL30.glGenVertexArrays();
+        GL30.glBindVertexArray(this.vao);
+
+        final FloatBuffer vertexData = this.generateVertexData(map);
+        this.vbo = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, this.vbo);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexData, GL15.GL_STATIC_DRAW);
+
+        GL20.glEnableVertexAttribArray(POSITION_ELEMENTS_INDEX);
+        GL20.glVertexAttribPointer(POSITION_ELEMENTS_INDEX, ELEMENTS_PER_POSITION, GL11.GL_FLOAT, false, STRIDE, POSITION_OFFSET);
+
+        GL20.glEnableVertexAttribArray(NORMAL_ELEMENTS_INDEX);
+        GL20.glVertexAttribPointer(NORMAL_ELEMENTS_INDEX, ELEMENTS_PER_NORMAL, GL11.GL_FLOAT, false, STRIDE, NORMAL_OFFSET);
+
+        GL20.glEnableVertexAttribArray(COLOR_ELEMENTS_INDEX);
+        GL20.glVertexAttribPointer(COLOR_ELEMENTS_INDEX, ELEMENTS_PER_COLOR, GL11.GL_FLOAT, false, STRIDE, COLOR_OFFSET);
+
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        GL30.glBindVertexArray(0);
+        MemoryUtil.memFree(vertexData);
+        
+        final IntBuffer indexData = this.generateIndexData(map);
+        this.ibo = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, this.ibo);
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indexData, GL15.GL_STATIC_DRAW);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+        MemoryUtil.memFree(indexData);
+    }
+
+    /**
+     * Generates the float buffer containing vertex data to send to the gpu.
+     *
+     * @param map The height map containing terrain data.
+     * @return The generated buffer.
+     */
+    private FloatBuffer generateVertexData(final HeightMap map) {
         final int vertexCount = map.getWidth() * map.getDepth();
         final FloatBuffer vertexData = MemoryUtil.memAllocFloat(vertexCount * ELEMENTS_PER_VERTEX);
         for (int i = 0; i < vertexCount; i++) {
@@ -156,28 +194,16 @@ public class TerrainMesh {
             vertexData.put(i * ELEMENTS_PER_VERTEX + 7, color.getGreen());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 8, color.getBlue());
         }
+        return vertexData;
+    }
 
-        this.vao = GL30.glGenVertexArrays();
-        GL30.glBindVertexArray(this.vao);
-
-        this.vbo = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, this.vbo);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexData, GL15.GL_STATIC_DRAW);
-
-        GL20.glEnableVertexAttribArray(POSITION_ELEMENTS_INDEX);
-        GL20.glVertexAttribPointer(POSITION_ELEMENTS_INDEX, ELEMENTS_PER_POSITION, GL11.GL_FLOAT, false, STRIDE, POSITION_OFFSET);
-
-        GL20.glEnableVertexAttribArray(NORMAL_ELEMENTS_INDEX);
-        GL20.glVertexAttribPointer(NORMAL_ELEMENTS_INDEX, ELEMENTS_PER_NORMAL, GL11.GL_FLOAT, false, STRIDE, NORMAL_OFFSET);
-
-        GL20.glEnableVertexAttribArray(COLOR_ELEMENTS_INDEX);
-        GL20.glVertexAttribPointer(COLOR_ELEMENTS_INDEX, ELEMENTS_PER_COLOR, GL11.GL_FLOAT, false, STRIDE, COLOR_OFFSET);
-
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        GL30.glBindVertexArray(0);
-        MemoryUtil.memFree(vertexData);
-
-        this.polygonCount = (map.getWidth() - 1) * (map.getDepth() - 1) * 2;
+    /**
+     * Generates vertex index data.
+     *
+     * @param map The height map containing terrain data.
+     * @return he generated buffer.
+     */
+    public IntBuffer generateIndexData(final HeightMap map) {
         final IntBuffer indexData = MemoryUtil.memAllocInt(this.polygonCount * INDICES_PER_POLYGON);
         int nextIndex = 0;
         for (int x = 0; x < map.getWidth() - 1; x++) {
@@ -194,12 +220,7 @@ public class TerrainMesh {
                 indexData.put(nextIndex++, index0);
             }
         }
-
-        this.ibo = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, this.ibo);
-        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indexData, GL15.GL_STATIC_DRAW);
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-        MemoryUtil.memFree(indexData);
+        return indexData;
     }
 
     /**
