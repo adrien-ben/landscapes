@@ -192,7 +192,7 @@ public class Landscapes implements Game {
         Engine.setBlendMode(BlendMode.DEFAULT);
         this.terrainRenderer.render(this.mesh, this.camera);
 
-        this.textRenderer.render("MODE " + this.state.toString(), this.font, new Vector2(0.0f, 0.9f), 0.1f, Color.WHITE);
+        this.textRenderer.render(this.state.toString() + " MODE", this.font, new Vector2(0.0f, 0.9f), 0.1f, Color.WHITE);
 
         this.uiRenderer.start();
         this.ui.render();
