@@ -4,7 +4,7 @@
 
 Landscape generator using perlin noise
 
-##Controls 
+## Controls 
 
 TAB : swaps between camera and ui mode
 WASD (or local equivalent) : moves the camera (in camera mode)
