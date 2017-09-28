@@ -1,3 +1,5 @@
 # landscapes
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6f11f580c2dc4cd1a6244ab4655f4494)](https://www.codacy.com/app/adrien.bennadji/landscapes?utm_source=github.com&utm_medium=referral&utm_content=adrien-ben/landscapes&utm_campaign=badger)
+
 Landscape generator using perlin noise
