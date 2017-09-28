@@ -1,21 +1,15 @@
 #version 330
 
 in float passHeight;
+in vec3 passNormal;
+in vec3 passColor;
 
 out vec4 finalColor;
 
+float ambient = 0.3;
+vec3 lightDir = normalize(vec3(1.0, -1.0, 1.0));
+
 void main() {
-    vec3 color;
-    if (passHeight < 0.3) {
-        color = vec3(0.0, 0.0, 1.0);
-    } else if (passHeight < 0.35) {
-        color = vec3(0.0, 0.5, 1.0);
-    }else if (passHeight < 0.5) {
-        color = vec3(0.0, 0.8, 0.0);
-    } else if (passHeight < 0.75) {
-        color = vec3(0.8, 0.5, 0.5);
-    } else {
-        color = vec3(1.0, 1.0, 1.0);
-    }
-    finalColor = vec4(vec3(color*passHeight), 1.0);
+    float diffuse = dot(-lightDir, normalize(passNormal));
+    finalColor = vec4(vec3(ambient*passColor + diffuse*passColor), 1.0);
 }

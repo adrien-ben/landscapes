@@ -1,6 +1,8 @@
 package com.adrien.games.landscapes.ui;
 
 import com.adrien.games.bagl.rendering.shape.UIRenderer;
+import com.adrien.games.bagl.rendering.text.Font;
+import com.adrien.games.bagl.rendering.text.TextRenderer;
 import com.adrien.games.landscapes.rendering.SliderRenderer;
 
 import java.util.ArrayList;
@@ -19,6 +21,11 @@ public class UI {
     private final SliderRenderer sliderRenderer;
 
     /**
+     * The renderer's font.
+     */
+    private Font font;
+
+    /**
      * The slider controllers.
      */
     private final List<SliderController> sliderControllers;
@@ -33,8 +40,9 @@ public class UI {
      *
      * @param uiRenderer The renderer to use to render ui.
      */
-    public UI(final UIRenderer uiRenderer) {
-        this.sliderRenderer = new SliderRenderer(uiRenderer);
+    public UI(final UIRenderer uiRenderer, final TextRenderer textRenderer, final Font font) {
+        this.sliderRenderer = new SliderRenderer(uiRenderer, textRenderer);
+        this.font = font;
         this.sliderControllers = new ArrayList<>();
         this.sliders = new ArrayList<>();
     }
@@ -63,7 +71,7 @@ public class UI {
      * Renders all sliders.
      */
     public void render() {
-        this.sliders.forEach(this.sliderRenderer::render);
+        this.sliders.forEach(slider -> this.sliderRenderer.render(slider, this.font));
     }
 
 }

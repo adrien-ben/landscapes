@@ -20,29 +20,38 @@ public class HeightMap {
     private final int depth;
 
     /**
+     * The scale of heights.
+     */
+    private final int scale;
+
+    /**
      * The heights of the map.
      */
     private final float[] heights;
 
     /**
      * Constructs the height map.
+     * <p>
+     * Heights will be generated in the range [0; 1] then scaled by scale.
      *
      * @param width       The width of the map.
      * @param depth       The depth of the map.
+     * @param scale       The scale of the heights.
      * @param frequency   The frequency of the noise generation.
      * @param octaves     The number of octaves used to generate heights.
      * @param persistence The persistence of the noise generator.
      * @param exponent    The exponent used to alter noise generator result.
      */
-    public HeightMap(final int width, final int depth, final float frequency, final int octaves, final float persistence, final float exponent) {
+    public HeightMap(final int width, final int depth, final int scale, final float frequency, final int octaves, final float persistence, final float exponent) {
         this.width = width;
         this.depth = depth;
+        this.scale = scale;
         this.heights = new float[this.width * this.depth];
         for (int i = 0; i < this.width * this.depth; i++) {
             final int x = i / this.depth;
             final int z = i % this.depth;
             final float noise = Noise.perlin(x * frequency, 0, z * frequency, octaves, persistence);
-            this.heights[i] = (float) Math.pow(noise, exponent);
+            this.heights[i] = (float) Math.pow(noise, exponent) * this.scale;
         }
     }
 
@@ -63,6 +72,10 @@ public class HeightMap {
 
     public int getDepth() {
         return depth;
+    }
+
+    public int getScale() {
+        return scale;
     }
 
 }
