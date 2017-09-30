@@ -158,7 +158,7 @@ public class TerrainMesh {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         GL30.glBindVertexArray(0);
         MemoryUtil.memFree(vertexData);
-        
+
         final IntBuffer indexData = this.generateIndexData(map);
         this.ibo = GL15.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, this.ibo);
@@ -184,7 +184,7 @@ public class TerrainMesh {
             vertexData.put(i * ELEMENTS_PER_VERTEX + 1, height);
             vertexData.put(i * ELEMENTS_PER_VERTEX + 2, z);
 
-            final Vector3 normal = this.computeNormal(map, x, z, height);
+            final Vector3 normal = this.computeVertexNormal(map, x, z);
             vertexData.put(i * ELEMENTS_PER_VERTEX + 3, normal.getX());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 4, normal.getY());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 5, normal.getZ());
@@ -214,32 +214,60 @@ public class TerrainMesh {
                 final int index3 = (x + 1) * map.getDepth() + z + 1;
                 indexData.put(nextIndex++, index0);
                 indexData.put(nextIndex++, index2);
-                indexData.put(nextIndex++, index3);
-                indexData.put(nextIndex++, index3);
                 indexData.put(nextIndex++, index1);
-                indexData.put(nextIndex++, index0);
+                indexData.put(nextIndex++, index1);
+                indexData.put(nextIndex++, index2);
+                indexData.put(nextIndex++, index3);
             }
         }
         return indexData;
     }
 
     /**
-     * Computes the orientation of a vertex from the elevation delta with its neighbors.
+     * Computes the normal of a vertex by averaging the normals of the surrounding faces.
      *
-     * @param map    The height map.
-     * @param x      The x index of the vertex.
-     * @param z      The y index of the vertex.
-     * @param height The height of the current vertex.
+     * @param map The height map.
+     * @param x   The x index of the vertex.
+     * @param z   The z index of the vertex.
+     * @return
+     */
+    private Vector3 computeVertexNormal(final HeightMap map, final int x, final int z) {
+        final Vector3 normal = new Vector3();
+        if (x > 0 && z > 0) {
+            normal.add(this.computeFaceNormal(map, x, z, true));
+        }
+        if (x < map.getWidth() - 1 && z > 0) {
+            normal.add(this.computeFaceNormal(map, x, z - 1, false));
+            normal.add(this.computeFaceNormal(map, x + 1, z, true));
+        }
+        if (x < map.getWidth() - 1 && x < map.getDepth() - 1) {
+            normal.add(this.computeFaceNormal(map, x, z, false));
+        }
+        if (x > 0 && z < map.getDepth() - 1) {
+            normal.add(this.computeFaceNormal(map, x, z + 1, true));
+            normal.add(this.computeFaceNormal(map, x - 1, z, false));
+        }
+        return normal.normalise();
+    }
+
+    /**
+     * Computes the orientation of a face from the elevation delta with its neighbors.
+     *
+     * @param map     The height map.
+     * @param x       The x index of the vertex.
+     * @param z       The y index of the vertex.
+     * @param botLeft Should compute the bottom-left triangle. If false compute the top-right triangle.
      * @return The computed normal vector.
      */
-    private Vector3 computeNormal(final HeightMap map, final int x, final int z, final float height) {
-        final int adjacentX = x < map.getWidth() - 1 ? x + 1 : x - 1;
-        final int adjacentZ = z < map.getDepth() - 1 ? z + 1 : z - 1;
+    private Vector3 computeFaceNormal(final HeightMap map, final int x, final int z, final boolean botLeft) {
+        final float height = map.getHeight(x, z);
+        final int adjacentX = botLeft ? x - 1 : x + 1;
+        final int adjacentZ = botLeft ? z - 1 : z + 1;
         final float adjacentHeightX = map.getHeight(adjacentX, z);
         final float adjacentHeightZ = map.getHeight(x, adjacentZ);
 
-        final Vector3 xVector = new Vector3(1f, adjacentHeightX - height, 0f).normalise();
-        final Vector3 zVector = new Vector3(0f, adjacentHeightZ - height, 1f).normalise();
+        final Vector3 xVector = new Vector3(botLeft ? -1f : 1f, adjacentHeightX - height, 0f).normalise();
+        final Vector3 zVector = new Vector3(0f, adjacentHeightZ - height, botLeft ? -1f : 1f).normalise();
         return Vector3.cross(zVector, xVector).normalise();
     }
 
