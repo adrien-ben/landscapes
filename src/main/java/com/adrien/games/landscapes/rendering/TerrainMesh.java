@@ -81,16 +81,6 @@ public class TerrainMesh {
     public static final int INDICES_PER_POLYGON = 3;
 
     /**
-     * Deep water color.
-     */
-    private static final Color DEEP_WATER = new Color(0.0f, 0.0f, 1.0f);
-
-    /**
-     * Deep water color.
-     */
-    private static final Color WATER = new Color(0.0f, 0.5f, 1.0f);
-
-    /**
      * Water color.
      */
     private static final Color SAND = new Color(0.93f, 0.79f, 0.69f);
@@ -189,7 +179,7 @@ public class TerrainMesh {
             vertexData.put(i * ELEMENTS_PER_VERTEX + 4, normal.getY());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 5, normal.getZ());
 
-            final Color color = this.computeColor(height, map.getScale(), normal);
+            final Color color = this.computeColor(height, map.getScale());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 6, color.getRed());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 7, color.getGreen());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 8, color.getBlue());
@@ -203,7 +193,7 @@ public class TerrainMesh {
      * @param map The height map containing terrain data.
      * @return he generated buffer.
      */
-    public IntBuffer generateIndexData(final HeightMap map) {
+    private IntBuffer generateIndexData(final HeightMap map) {
         final IntBuffer indexData = MemoryUtil.memAllocInt(this.polygonCount * INDICES_PER_POLYGON);
         int nextIndex = 0;
         for (int x = 0; x < map.getWidth() - 1; x++) {
@@ -229,7 +219,7 @@ public class TerrainMesh {
      * @param map The height map.
      * @param x   The x index of the vertex.
      * @param z   The z index of the vertex.
-     * @return
+     * @return The averaged normal of the vertex.
      */
     private Vector3 computeVertexNormal(final HeightMap map, final int x, final int z) {
         final Vector3 normal = new Vector3();
@@ -275,36 +265,42 @@ public class TerrainMesh {
      * Generates the color of a vertex from its elevate and its orientation.
      *
      * @param height The height of the vertex.
-     * @param normal The orientation of the vertex.
      * @return The computed color.
      */
-    private Color computeColor(final float height, final int scale, final Vector3 normal) {
-        final float angle = Vector3.UP.dot(normal);
-        if (height < 0.3 * scale) {
-            return DEEP_WATER;
-        }
-        if (height < 0.35 * scale) {
-            return WATER;
-        }
-        if (height < 0.38 * scale) {
+    private Color computeColor(final float height, final int scale) {
+        final float sandLimit = 0.35f * scale;
+        final float grassLimit = 0.44f * scale;
+        final float dirtLimit = 0.65f * scale;
+        final float transitionHeight = 0.08f * scale;
+
+        if (height < sandLimit) {
             return SAND;
         }
-        if (height < 0.45 * scale) {
+        if (height < sandLimit + transitionHeight) {
+            final float blendFactor = (height - sandLimit) / transitionHeight;
+            final Color blended = new Color(0f, 0f, 0f);
+            Color.blend(GRASS, SAND, blendFactor, blended);
+            return blended;
+        }
+        if (height < grassLimit) {
             return GRASS;
         }
-        if (height < 0.55 * scale) {
-            if (angle > 0.8) {
-                return GRASS;
-            }
+        if (height < grassLimit + transitionHeight) {
+            final float blendFactor = (height - grassLimit) / transitionHeight;
+            final Color blended = new Color(0f, 0f, 0f);
+            Color.blend(DIRT, GRASS, blendFactor, blended);
+            return blended;
+        }
+        if (height < dirtLimit) {
             return DIRT;
         }
-        if (height < 0.65 * scale) {
-            return DIRT;
+        if (height < dirtLimit + transitionHeight) {
+            final float blendFactor = (height - dirtLimit) / transitionHeight;
+            final Color blended = new Color(0f, 0f, 0f);
+            Color.blend(SNOW, DIRT, blendFactor, blended);
+            return blended;
         }
-        if (angle > 0.8) {
-            return SNOW;
-        }
-        return DIRT;
+        return SNOW;
     }
 
     /**
