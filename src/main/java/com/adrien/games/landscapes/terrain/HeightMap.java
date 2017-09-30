@@ -32,26 +32,21 @@ public class HeightMap {
     /**
      * Constructs the height map.
      * <p>
-     * Heights will be generated in the range [0; 1] then scaled by scale.
+     * Heights will be generated in the range [0; 1] then scaled by scale parameter.
      *
-     * @param width       The width of the map.
-     * @param depth       The depth of the map.
-     * @param scale       The scale of the heights.
-     * @param frequency   The frequency of the noise generation.
-     * @param octaves     The number of octaves used to generate heights.
-     * @param persistence The persistence of the noise generator.
-     * @param exponent    The exponent used to alter noise generator result.
+     * @param parameters The parameters of the height map.
      */
-    public HeightMap(final int width, final int depth, final int scale, final float frequency, final int octaves, final float persistence, final float exponent) {
-        this.width = width;
-        this.depth = depth;
-        this.scale = scale;
+    public HeightMap(final HeightMapParameters parameters) {
+        this.width = parameters.getWidth();
+        this.depth = parameters.getDepth();
+        this.scale = parameters.getScale();
         this.heights = new float[this.width * this.depth];
         for (int i = 0; i < this.width * this.depth; i++) {
             final int x = i / this.depth;
             final int z = i % this.depth;
-            final float noise = Noise.perlin(x * frequency, 0, z * frequency, octaves, persistence);
-            this.heights[i] = (float) Math.pow(noise, exponent) * this.scale;
+            final float noise = Noise.perlin(x * parameters.getFrequency(), 0, z * parameters.getFrequency(), parameters.getOctaves(),
+                    parameters.getPersistence());
+            this.heights[i] = (float) Math.pow(noise, parameters.getExponent()) * this.scale;
         }
     }
 
