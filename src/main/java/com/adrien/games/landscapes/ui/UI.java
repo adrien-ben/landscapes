@@ -23,7 +23,7 @@ public class UI {
     /**
      * The renderer's font.
      */
-    private Font font;
+    private final Font font;
 
     /**
      * The slider controllers.

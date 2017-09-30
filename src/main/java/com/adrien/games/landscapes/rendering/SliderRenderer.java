@@ -28,12 +28,12 @@ public class SliderRenderer {
     /**
      * The ui renderer.
      */
-    private UIRenderer uiRenderer;
+    private final UIRenderer uiRenderer;
 
     /**
      * The text renderer.
      */
-    private TextRenderer textRenderer;
+    private final TextRenderer textRenderer;
 
     public SliderRenderer(final UIRenderer uiRenderer, final TextRenderer textRenderer) {
         this.uiRenderer = uiRenderer;

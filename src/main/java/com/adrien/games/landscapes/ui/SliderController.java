@@ -15,12 +15,12 @@ public class SliderController {
     /**
      * The slider to control.
      */
-    private Slider slider;
+    private final Slider slider;
 
     /**
      * The listener to notify.
      */
-    private SliderListener listener;
+    private final SliderListener listener;
 
     public SliderController(final Slider slider, final SliderListener listener) {
         this.slider = slider;
