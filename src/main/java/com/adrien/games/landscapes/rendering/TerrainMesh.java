@@ -246,7 +246,7 @@ public class TerrainMesh {
      * @param map    The height map.
      * @param x      The x index of the vertex.
      * @param z      The y index of the vertex.
-     * @param offset Amount to offset the current vertex position to create the face.
+     * @param offset Amount to offset the current vertex index to create the face.
      * @return The computed normal vector.
      */
     private Vector3 computeFaceNormal(final HeightMap map, final int x, final int z, final int offset) {
