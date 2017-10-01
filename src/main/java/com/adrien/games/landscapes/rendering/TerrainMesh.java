@@ -224,18 +224,18 @@ public class TerrainMesh {
     private Vector3 computeVertexNormal(final HeightMap map, final int x, final int z) {
         final Vector3 normal = new Vector3();
         if (x > 0 && z > 0) {
-            normal.add(this.computeFaceNormal(map, x, z, true));
+            normal.add(this.computeFaceNormal(map, x, z, -1));
         }
         if (x < map.getWidth() - 1 && z > 0) {
-            normal.add(this.computeFaceNormal(map, x, z - 1, false));
-            normal.add(this.computeFaceNormal(map, x + 1, z, true));
+            normal.add(this.computeFaceNormal(map, x, z - 1, 1));
+            normal.add(this.computeFaceNormal(map, x + 1, z, -1));
         }
         if (x < map.getWidth() - 1 && x < map.getDepth() - 1) {
-            normal.add(this.computeFaceNormal(map, x, z, false));
+            normal.add(this.computeFaceNormal(map, x, z, 1));
         }
         if (x > 0 && z < map.getDepth() - 1) {
-            normal.add(this.computeFaceNormal(map, x, z + 1, true));
-            normal.add(this.computeFaceNormal(map, x - 1, z, false));
+            normal.add(this.computeFaceNormal(map, x, z + 1, -1));
+            normal.add(this.computeFaceNormal(map, x - 1, z, 1));
         }
         return normal.normalise();
     }
@@ -243,21 +243,21 @@ public class TerrainMesh {
     /**
      * Computes the orientation of a face from the elevation delta with its neighbors.
      *
-     * @param map     The height map.
-     * @param x       The x index of the vertex.
-     * @param z       The y index of the vertex.
-     * @param botLeft Should compute the bottom-left triangle. If false compute the top-right triangle.
+     * @param map    The height map.
+     * @param x      The x index of the vertex.
+     * @param z      The y index of the vertex.
+     * @param offset Amount to offset the current vertex position to create the face.
      * @return The computed normal vector.
      */
-    private Vector3 computeFaceNormal(final HeightMap map, final int x, final int z, final boolean botLeft) {
+    private Vector3 computeFaceNormal(final HeightMap map, final int x, final int z, final int offset) {
         final float height = map.getHeight(x, z);
-        final int adjacentX = botLeft ? x - 1 : x + 1;
-        final int adjacentZ = botLeft ? z - 1 : z + 1;
+        final int adjacentX = x + offset;
+        final int adjacentZ = z + offset;
         final float adjacentHeightX = map.getHeight(adjacentX, z);
         final float adjacentHeightZ = map.getHeight(x, adjacentZ);
 
-        final Vector3 xVector = new Vector3(botLeft ? -1f : 1f, adjacentHeightX - height, 0f).normalise();
-        final Vector3 zVector = new Vector3(0f, adjacentHeightZ - height, botLeft ? -1f : 1f).normalise();
+        final Vector3 xVector = new Vector3(offset, adjacentHeightX - height, 0f).normalise();
+        final Vector3 zVector = new Vector3(0f, adjacentHeightZ - height, offset).normalise();
         return Vector3.cross(zVector, xVector).normalise();
     }
 

@@ -85,7 +85,7 @@ public class Landscapes implements Game {
     /**
      * Game state
      */
-    private State state = State.CAMERA;
+    private State state = State.UI;
 
     /**
      * {@inheritDoc}
@@ -95,7 +95,6 @@ public class Landscapes implements Game {
     @Override
     public void init() {
         Engine.setClearColor(Color.CORNFLOWER_BLUE);
-        Input.setMouseMode(MouseMode.DISABLED);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
 
