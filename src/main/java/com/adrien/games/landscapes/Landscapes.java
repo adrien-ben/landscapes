@@ -4,6 +4,8 @@ import com.adrien.games.bagl.core.*;
 import com.adrien.games.bagl.core.math.Vector2;
 import com.adrien.games.bagl.core.math.Vector3;
 import com.adrien.games.bagl.rendering.BlendMode;
+import com.adrien.games.bagl.rendering.light.DirectionalLight;
+import com.adrien.games.bagl.rendering.light.Light;
 import com.adrien.games.bagl.rendering.shape.UIRenderer;
 import com.adrien.games.bagl.rendering.text.Font;
 import com.adrien.games.bagl.rendering.text.TextRenderer;
@@ -63,6 +65,16 @@ public class Landscapes implements Game {
     private boolean dirtyMesh;
 
     /**
+     * Ambient light of the scene.
+     */
+    private Light ambient;
+
+    /**
+     * Sun light of the scene.
+     */
+    private DirectionalLight sun;
+
+    /**
      * The text renderer.
      */
     private TextRenderer textRenderer;
@@ -110,6 +122,9 @@ public class Landscapes implements Game {
                 .persistence(0.4f).exponent(1.16f);
         this.mesh = new TerrainMesh(new HeightMap(this.mapParameters));
         this.dirtyMesh = false;
+
+        this.ambient = new Light(0.3f, Color.WHITE);
+        this.sun = new DirectionalLight(1f, Color.WHITE, new Vector3(1f, -1f, 1f));
 
         this.textRenderer = new TextRenderer();
         this.uiRenderer = new UIRenderer();
@@ -205,7 +220,7 @@ public class Landscapes implements Game {
     public void render() {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         Engine.setBlendMode(BlendMode.DEFAULT);
-        this.terrainRenderer.render(this.mesh, this.camera);
+        this.terrainRenderer.render(this.mesh, this.camera, this.ambient, this.sun);
 
         this.textRenderer.render(this.state.toString() + " MODE", this.font, new Vector2(0.0f, 0.9f), 0.1f, Color.WHITE);
         this.uiRenderer.start();

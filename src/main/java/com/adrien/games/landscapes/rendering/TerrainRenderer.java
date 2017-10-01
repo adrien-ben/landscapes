@@ -2,6 +2,8 @@ package com.adrien.games.landscapes.rendering;
 
 import com.adrien.games.bagl.core.Camera;
 import com.adrien.games.bagl.rendering.Shader;
+import com.adrien.games.bagl.rendering.light.DirectionalLight;
+import com.adrien.games.bagl.rendering.light.Light;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -29,12 +31,19 @@ public class TerrainRenderer {
     /**
      * Renders a {@link TerrainMesh}.
      *
-     * @param mesh   The mesh to render.
-     * @param camera The camera used for rendering.
+     * @param mesh    The mesh to render.
+     * @param camera  The camera used for rendering.
+     * @param ambient The ambient light of the scene.
+     * @param sun     The sun light of the scene.
      */
-    public void render(final TerrainMesh mesh, final Camera camera) {
+    public void render(final TerrainMesh mesh, final Camera camera, final Light ambient, final DirectionalLight sun) {
         this.shader.bind();
         this.shader.setUniform("uVP", camera.getViewProj());
+        this.shader.setUniform("uAmbient.intensity", ambient.getIntensity());
+        this.shader.setUniform("uAmbient.color", ambient.getColor());
+        this.shader.setUniform("uSun.base.intensity", sun.getIntensity());
+        this.shader.setUniform("uSun.base.color", sun.getColor());
+        this.shader.setUniform("uSun.direction", sun.getDirection());
 
         mesh.bind();
         GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getPolygonCount() * TerrainMesh.INDICES_PER_POLYGON, GL11.GL_UNSIGNED_INT, 0);
