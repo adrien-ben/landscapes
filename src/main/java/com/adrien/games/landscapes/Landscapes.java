@@ -3,7 +3,6 @@ package com.adrien.games.landscapes;
 import com.adrien.games.bagl.core.*;
 import com.adrien.games.bagl.core.math.Vector2;
 import com.adrien.games.bagl.core.math.Vector3;
-import com.adrien.games.bagl.rendering.BlendMode;
 import com.adrien.games.bagl.rendering.light.DirectionalLight;
 import com.adrien.games.bagl.rendering.light.Light;
 import com.adrien.games.bagl.rendering.shape.UIRenderer;
@@ -12,6 +11,8 @@ import com.adrien.games.bagl.rendering.text.TextRenderer;
 import com.adrien.games.bagl.utils.FileUtils;
 import com.adrien.games.landscapes.rendering.terrain.TerrainMesh;
 import com.adrien.games.landscapes.rendering.terrain.TerrainRenderer;
+import com.adrien.games.landscapes.rendering.water.WaterMesh;
+import com.adrien.games.landscapes.rendering.water.WaterRenderer;
 import com.adrien.games.landscapes.terrain.HeightMap;
 import com.adrien.games.landscapes.terrain.HeightMapParameters;
 import com.adrien.games.landscapes.ui.Slider;
@@ -27,7 +28,7 @@ public class Landscapes implements Game {
     /**
      * Size of the terrain.
      */
-    private static final int TERRAIN_SIZE = 1000;
+    private static final int TERRAIN_SIZE = 800;
 
     /**
      * Height scale of the terrain.
@@ -63,6 +64,16 @@ public class Landscapes implements Game {
      * Should the mesh be regenerated ?
      */
     private boolean dirtyMesh;
+
+    /**
+     * Water renderer.
+     */
+    private WaterRenderer waterRenderer;
+
+    /**
+     * Water mesh
+     */
+    private WaterMesh waterMesh;
 
     /**
      * Ambient light of the scene.
@@ -107,7 +118,6 @@ public class Landscapes implements Game {
     @Override
     public void init() {
         Engine.setClearColor(Color.CORNFLOWER_BLUE);
-        GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
 
         final Configuration config = Configuration.getInstance();
@@ -123,8 +133,11 @@ public class Landscapes implements Game {
         this.mesh = new TerrainMesh(new HeightMap(this.mapParameters));
         this.dirtyMesh = false;
 
+        this.waterRenderer = new WaterRenderer();
+        this.waterMesh = new WaterMesh();
+
         this.ambient = new Light(0.3f, Color.WHITE);
-        this.sun = new DirectionalLight(1f, Color.WHITE, new Vector3(1f, -1f, 1f));
+        this.sun = new DirectionalLight(1f, Color.WHITE, new Vector3(-1f, -1f, -1f));
 
         this.textRenderer = new TextRenderer();
         this.uiRenderer = new UIRenderer();
@@ -218,10 +231,8 @@ public class Landscapes implements Game {
      */
     @Override
     public void render() {
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        Engine.setBlendMode(BlendMode.DEFAULT);
         this.terrainRenderer.render(this.mesh, this.camera, this.ambient, this.sun);
-
+        this.waterRenderer.render(this.waterMesh, TERRAIN_SIZE, TERRAIN_SIZE, 46f, this.camera, this.ambient, this.sun);
         this.textRenderer.render(this.state.toString() + " MODE", this.font, new Vector2(0.0f, 0.9f), 0.1f, Color.WHITE);
         this.uiRenderer.start();
         this.ui.render();
@@ -237,6 +248,8 @@ public class Landscapes implements Game {
     public void destroy() {
         this.mesh.destroy();
         this.terrainRenderer.destroy();
+        this.waterRenderer.destroy();
+        this.waterMesh.destroy();
         this.font.destroy();
         this.textRenderer.destroy();
         this.uiRenderer.destroy();
