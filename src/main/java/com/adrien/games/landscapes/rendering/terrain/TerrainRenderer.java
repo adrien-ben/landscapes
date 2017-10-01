@@ -1,4 +1,4 @@
-package com.adrien.games.landscapes.rendering;
+package com.adrien.games.landscapes.rendering.terrain;
 
 import com.adrien.games.bagl.core.Camera;
 import com.adrien.games.bagl.rendering.Shader;

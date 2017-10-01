@@ -1,4 +1,4 @@
-package com.adrien.games.landscapes.rendering;
+package com.adrien.games.landscapes.rendering.ui;
 
 import com.adrien.games.bagl.core.Color;
 import com.adrien.games.bagl.core.Engine;

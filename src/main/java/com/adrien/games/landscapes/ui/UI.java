@@ -3,7 +3,7 @@ package com.adrien.games.landscapes.ui;
 import com.adrien.games.bagl.rendering.shape.UIRenderer;
 import com.adrien.games.bagl.rendering.text.Font;
 import com.adrien.games.bagl.rendering.text.TextRenderer;
-import com.adrien.games.landscapes.rendering.SliderRenderer;
+import com.adrien.games.landscapes.rendering.ui.SliderRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
