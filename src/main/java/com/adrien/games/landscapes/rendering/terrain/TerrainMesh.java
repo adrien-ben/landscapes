@@ -2,166 +2,102 @@ package com.adrien.games.landscapes.rendering.terrain;
 
 import com.adrien.games.bagl.core.Color;
 import com.adrien.games.bagl.core.math.Vector3;
+import com.adrien.games.bagl.rendering.BufferUsage;
+import com.adrien.games.bagl.rendering.vertex.*;
 import com.adrien.games.landscapes.terrain.HeightMap;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 /**
- * 3D mesh of a terrain.
+ * 3D mesh of a terrain
  * <p>
  * The mesh is generated from a {@link HeightMap}. It generates one vertex per
- * point in the height map.
+ * point in the height map
+ *
+ * @author adrien
  */
 public class TerrainMesh {
 
-    /**
-     * Number of elements in one vertex.
-     */
+    /** Number of elements in one vertex */
     private static final int ELEMENTS_PER_VERTEX = 9;
 
-    /**
-     * Vertex buffer stride.
-     */
-    private static final int STRIDE = ELEMENTS_PER_VERTEX * Float.SIZE / 8;
-
-    /**
-     * Number of elements per positions.
-     */
+    /** Number of elements per positions */
     private static final int ELEMENTS_PER_POSITION = 3;
 
-    /**
-     * Number of elements per normal.
-     */
+    /** Number of elements per normal */
     private static final int ELEMENTS_PER_NORMAL = 3;
 
-    /**
-     * Number of elements per color.
-     */
+    /** Number of elements per color */
     private static final int ELEMENTS_PER_COLOR = 3;
 
-    /**
-     * Byte offset of positions in buffer
-     */
-    private static final int POSITION_OFFSET = 0;
-
-    /**
-     * Index of the positions in the vertex array.
-     */
+    /** Index of the positions in the vertex array */
     private static final int POSITION_ELEMENTS_INDEX = 0;
 
-    /**
-     * Index of the normals in the vertex array.
-     */
+    /** Index of the normals in the vertex array */
     private static final int NORMAL_ELEMENTS_INDEX = 1;
 
-    /**
-     * Byte offset of normals in buffer
-     */
-    private static final int NORMAL_OFFSET = ELEMENTS_PER_POSITION * Float.SIZE / 8;
-
-    /**
-     * Index of the colors in the vertex array.
-     */
+    /** Index of the colors in the vertex array */
     private static final int COLOR_ELEMENTS_INDEX = 2;
 
-    /**
-     * Byte offset of colors in buffer
-     */
-    private static final int COLOR_OFFSET = (ELEMENTS_PER_NORMAL + ELEMENTS_PER_POSITION) * Float.SIZE / 8;
-
-    /**
-     * Number of indices per polygons.
-     */
+    /** Number of indices per polygons */
     public static final int INDICES_PER_POLYGON = 3;
 
-    /**
-     * Water color.
-     */
+    /** Water color */
     private static final Color SAND = new Color(0.93f, 0.79f, 0.69f);
 
-    /**
-     * Grass color.
-     */
+    /** Grass color */
     private static final Color GRASS = new Color(0.2f, 0.5f, 0.0f);
 
-    /**
-     * Dirt color.
-     */
+    /** Dirt color */
     private static final Color DIRT = new Color(0.61f, 0.46f, 0.32f);
 
-    /**
-     * Snow color.
-     */
+    /** Snow color */
     private static final Color SNOW = new Color(1.0f, 1.0f, 1.0f);
 
-    /**
-     * OGL vertex array.
-     */
-    private final int vao;
+    /** Vertex array */
+    private final VertexArray vArray;
 
-    /**
-     * OGL vertex buffer.
-     */
-    private final int vbo;
+    /** Vertex buffer */
+    private final VertexBuffer vBuffer;
 
-    /**
-     * OGL index buffer.
-     */
-    private final int ibo;
+    /** Index buffer */
+    private final IndexBuffer iBuffer;
 
-    /**
-     * The number of polygon composing the terrain.
-     */
+    /** The number of polygon composing the terrain */
     private final int polygonCount;
 
     /**
-     * Generates a new mesh.
+     * Generate a new mesh
      *
-     * @param map The height map from which to generate the mesh.
+     * @param map The height map from which to generate the mesh
      */
     public TerrainMesh(final HeightMap map) {
         this.polygonCount = (map.getWidth() - 1) * (map.getDepth() - 1) * 2;
 
-        this.vao = GL30.glGenVertexArrays();
-        GL30.glBindVertexArray(this.vao);
-
         final FloatBuffer vertexData = this.generateVertexData(map);
-        this.vbo = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, this.vbo);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexData, GL15.GL_STATIC_DRAW);
-
-        GL20.glEnableVertexAttribArray(POSITION_ELEMENTS_INDEX);
-        GL20.glVertexAttribPointer(POSITION_ELEMENTS_INDEX, ELEMENTS_PER_POSITION, GL11.GL_FLOAT, false, STRIDE, POSITION_OFFSET);
-
-        GL20.glEnableVertexAttribArray(NORMAL_ELEMENTS_INDEX);
-        GL20.glVertexAttribPointer(NORMAL_ELEMENTS_INDEX, ELEMENTS_PER_NORMAL, GL11.GL_FLOAT, false, STRIDE, NORMAL_OFFSET);
-
-        GL20.glEnableVertexAttribArray(COLOR_ELEMENTS_INDEX);
-        GL20.glVertexAttribPointer(COLOR_ELEMENTS_INDEX, ELEMENTS_PER_COLOR, GL11.GL_FLOAT, false, STRIDE, COLOR_OFFSET);
-
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        GL30.glBindVertexArray(0);
+        this.vBuffer = new VertexBuffer(vertexData, new VertexBufferParams()
+                .element(new VertexElement(POSITION_ELEMENTS_INDEX, ELEMENTS_PER_POSITION))
+                .element(new VertexElement(NORMAL_ELEMENTS_INDEX, ELEMENTS_PER_NORMAL))
+                .element(new VertexElement(COLOR_ELEMENTS_INDEX, ELEMENTS_PER_COLOR)));
         MemoryUtil.memFree(vertexData);
 
+        this.vArray = new VertexArray();
+        this.vArray.bind();
+        this.vArray.attachVertexBuffer(this.vBuffer);
+        this.vArray.unbind();
+
         final IntBuffer indexData = this.generateIndexData(map);
-        this.ibo = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, this.ibo);
-        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indexData, GL15.GL_STATIC_DRAW);
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+        this.iBuffer = new IndexBuffer(indexData, BufferUsage.STATIC_DRAW);
         MemoryUtil.memFree(indexData);
     }
 
     /**
-     * Generates the float buffer containing vertex data to send to the gpu.
+     * Generate the float buffer containing vertex data to send to the gpu
      *
-     * @param map The height map containing terrain data.
-     * @return The generated buffer.
+     * @param map The height map containing terrain data
+     * @return The generated buffer
      */
     private FloatBuffer generateVertexData(final HeightMap map) {
         final int vertexCount = map.getWidth() * map.getDepth();
@@ -188,10 +124,10 @@ public class TerrainMesh {
     }
 
     /**
-     * Generates vertex index data.
+     * Generate vertex index data
      *
-     * @param map The height map containing terrain data.
-     * @return he generated buffer.
+     * @param map The height map containing terrain data
+     * @return he generated buffer
      */
     private IntBuffer generateIndexData(final HeightMap map) {
         final IntBuffer indexData = MemoryUtil.memAllocInt(this.polygonCount * INDICES_PER_POLYGON);
@@ -214,12 +150,12 @@ public class TerrainMesh {
     }
 
     /**
-     * Computes the normal of a vertex by averaging the normals of the surrounding faces.
+     * Compute the normal of a vertex by averaging the normals of the surrounding faces
      *
-     * @param map The height map.
-     * @param x   The x index of the vertex.
-     * @param z   The z index of the vertex.
-     * @return The averaged normal of the vertex.
+     * @param map The height map
+     * @param x   The x index of the vertex
+     * @param z   The z index of the vertex
+     * @return The averaged normal of the vertex
      */
     private Vector3 computeVertexNormal(final HeightMap map, final int x, final int z) {
         final Vector3 normal = new Vector3();
@@ -241,13 +177,13 @@ public class TerrainMesh {
     }
 
     /**
-     * Computes the orientation of a face from the elevation delta with its neighbors.
+     * Compute the orientation of a face from the elevation delta with its neighbors
      *
-     * @param map    The height map.
-     * @param x      The x index of the vertex.
-     * @param z      The y index of the vertex.
-     * @param offset Amount to offset the current vertex index to create the face.
-     * @return The computed normal vector.
+     * @param map    The height map
+     * @param x      The x index of the vertex
+     * @param z      The y index of the vertex
+     * @param offset Amount to offset the current vertex index to create the face
+     * @return The computed normal vector
      */
     private Vector3 computeFaceNormal(final HeightMap map, final int x, final int z, final int offset) {
         final float height = map.getHeight(x, z);
@@ -262,10 +198,10 @@ public class TerrainMesh {
     }
 
     /**
-     * Generates the color of a vertex from its elevate and its orientation.
+     * Generate the color of a vertex from its elevate and its orientation
      *
-     * @param height The height of the vertex.
-     * @return The computed color.
+     * @param height The height of the vertex
+     * @return The computed color
      */
     private Color computeColor(final float height, final int scale) {
         final float sandLimit = 0.35f * scale;
@@ -304,30 +240,30 @@ public class TerrainMesh {
     }
 
     /**
-     * Binds the current mesh.
+     * Bind the current mesh
      */
     public void bind() {
-        GL30.glBindVertexArray(this.vao);
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, this.ibo);
+        this.vArray.bind();
+        this.iBuffer.bind();
     }
 
     /**
-     * Unbinds the current mesh.
+     * Unbind the current mesh
      */
     public void unbind() {
-        GL30.glBindVertexArray(0);
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+        this.iBuffer.unbind();
+        this.vArray.unbind();
     }
 
     /**
-     * Destroys the current mesh.
+     * Destroy the current mesh
      * <p>
-     * Deletes all OGL buffers.
+     * Delete all OGL buffers
      */
     public void destroy() {
-        GL30.glDeleteVertexArrays(this.vao);
-        GL15.glDeleteBuffers(this.vbo);
-        GL15.glDeleteBuffers(this.ibo);
+        this.iBuffer.destroy();
+        this.vBuffer.destroy();
+        this.vArray.destroy();
     }
 
     public int getPolygonCount() {

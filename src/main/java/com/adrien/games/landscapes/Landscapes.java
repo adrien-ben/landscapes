@@ -15,99 +15,71 @@ import com.adrien.games.landscapes.rendering.water.WaterMesh;
 import com.adrien.games.landscapes.rendering.water.WaterRenderer;
 import com.adrien.games.landscapes.terrain.HeightMap;
 import com.adrien.games.landscapes.terrain.HeightMapParameters;
-import com.adrien.games.landscapes.ui.Slider;
 import com.adrien.games.landscapes.ui.UI;
+import com.adrien.games.landscapes.ui.controls.CheckBox;
+import com.adrien.games.landscapes.ui.controls.Slider;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 /**
- * Landscape generator.
+ * Landscape generator
+ *
+ * @author adrien
  */
 public class Landscapes implements Game {
 
-    /**
-     * Size of the terrain.
-     */
+    /** Size of the terrain */
     private static final int TERRAIN_SIZE = 800;
 
-    /**
-     * Height scale of the terrain.
-     */
+    /** Height scale of the terrain */
     private static final int HEIGHT_SCALE = 128;
 
-    /**
-     * The camera.
-     */
+    /** The camera */
     private Camera camera;
 
-    /**
-     * The camera controller.
-     */
+    /** The camera controller */
     private CameraController cameraController;
 
-    /**
-     * The terrain renderer.
-     */
+    /** The terrain renderer */
     private TerrainRenderer terrainRenderer;
 
-    /**
-     * The parameters of the height map.
-     */
+    /** The parameters of the height map */
     private HeightMapParameters mapParameters;
 
-    /**
-     * The terrain mesh.
-     */
+    /** The terrain mesh */
     private TerrainMesh mesh;
 
-    /**
-     * Should the mesh be regenerated ?
-     */
+    /** Should the mesh be regenerated ? */
     private boolean dirtyMesh;
 
-    /**
-     * Water renderer.
-     */
+    /** Water renderer */
     private WaterRenderer waterRenderer;
 
-    /**
-     * Water mesh
-     */
+    /** Water mesh */
     private WaterMesh waterMesh;
 
-    /**
-     * Ambient light of the scene.
-     */
+    /** Should render water */
+    private boolean renderWater;
+
+    /** Ambient light of the scene */
     private Light ambient;
 
-    /**
-     * Sun light of the scene.
-     */
+    /** Sun light of the scene */
     private DirectionalLight sun;
 
-    /**
-     * The text renderer.
-     */
+    /** The text renderer */
     private TextRenderer textRenderer;
 
-    /**
-     * The UI renderer.
-     */
+    /** The UI renderer */
     private UIRenderer uiRenderer;
 
-    /**
-     * The font used for text rendering.
-     */
+    /** The font used for text rendering */
     private Font font;
 
-    /**
-     * UI.
-     */
+    /** UI */
     private UI ui;
 
-    /**
-     * Game state
-     */
+    /** Game state */
     private State state = State.UI;
 
     /**
@@ -135,6 +107,7 @@ public class Landscapes implements Game {
 
         this.waterRenderer = new WaterRenderer();
         this.waterMesh = new WaterMesh();
+        this.renderWater = true;
 
         this.ambient = new Light(0.3f, Color.WHITE);
         this.sun = new DirectionalLight(1f, Color.WHITE, new Vector3(-1f, -1f, -1f));
@@ -147,35 +120,40 @@ public class Landscapes implements Game {
     }
 
     /**
-     * Sets up UI elements.
+     * Sets up UI elements
      */
     private void setUpUI() {
-        final Slider octavesSlider = new Slider("octaves", 0.005f, 0.005f, 0.4f, 0.02f, 1, 10, 1, this.mapParameters.getOctaves());
-        final Slider frequencySlider = new Slider("frequency", 0.005f, 0.065f, 0.4f, 0.02f, 0, 0.1f, 0.001f, this.mapParameters.getFrequency());
-        final Slider persistenceSlider = new Slider("persistence", 0.005f, 0.125f, 0.4f, 0.02f, 0, 10, 0.05f, this.mapParameters.getPersistence());
-        final Slider exponentSlider = new Slider("exponent", 0.005f, 0.185f, 0.4f, 0.02f, 0.01f, 5, 0.01f, this.mapParameters.getExponent());
-        this.ui.addSlider(octavesSlider, octaves -> {
+        final Slider octavesSlider = new Slider("octaves", "octaves", 0.005f, 0.005f, 0.4f, 0.02f, 1, 10, 1, this.mapParameters.getOctaves());
+        final Slider frequencySlider = new Slider("frequency", "frequency", 0.005f, 0.065f, 0.4f, 0.02f, 0, 0.1f, 0.001f,
+                this.mapParameters.getFrequency());
+        final Slider persistenceSlider = new Slider("persistence", "persistence", 0.005f, 0.125f, 0.4f, 0.02f, 0, 10, 0.05f,
+                this.mapParameters.getPersistence());
+        final Slider exponentSlider = new Slider("exponent", "exponent", 0.005f, 0.185f, 0.4f, 0.02f, 0.01f, 5, 0.01f,
+                this.mapParameters.getExponent());
+        final CheckBox waterToggle = new CheckBox("waterToggle", "Display water", 0.005f, 0.245f, 0.04f, true);
+        this.ui.add(octavesSlider, octaves -> {
             this.mapParameters.octaves((int) octaves);
             this.dirtyMesh = true;
         });
-        this.ui.addSlider(frequencySlider, frequency -> {
+        this.ui.add(frequencySlider, frequency -> {
             this.mapParameters.frequency(frequency);
             this.dirtyMesh = true;
         });
-        this.ui.addSlider(persistenceSlider, persistence -> {
+        this.ui.add(persistenceSlider, persistence -> {
             this.mapParameters.persistence(persistence);
             this.dirtyMesh = true;
         });
-        this.ui.addSlider(exponentSlider, exponent -> {
+        this.ui.add(exponentSlider, exponent -> {
             this.mapParameters.exponent(exponent);
             this.dirtyMesh = true;
         });
+        this.ui.add(waterToggle, checked -> this.renderWater = checked);
     }
 
     /**
      * {@inheritDoc}
      * <p>
-     * Checks whether the Tab key was pushed. If it was then the game state
+     * Check whether the Tab key was pushed. If it was then the game state
      * changes from CAMERA to UI for the other way
      * <p>
      * If the game is in CAMERA state, updates the camera controller to allow
@@ -216,7 +194,7 @@ public class Landscapes implements Game {
     }
 
     /**
-     * Refresh the mesh.
+     * Refresh the mesh
      */
     private void refresh() {
         this.mesh.destroy();
@@ -232,7 +210,9 @@ public class Landscapes implements Game {
     @Override
     public void render() {
         this.terrainRenderer.render(this.mesh, this.camera, this.ambient, this.sun);
-        this.waterRenderer.render(this.waterMesh, TERRAIN_SIZE, TERRAIN_SIZE, 46f, this.camera, this.ambient, this.sun);
+        if (this.renderWater) {
+            this.waterRenderer.render(this.waterMesh, TERRAIN_SIZE, TERRAIN_SIZE, 46f, this.camera, this.ambient, this.sun);
+        }
         this.textRenderer.render(this.state.toString() + " MODE", this.font, new Vector2(0.0f, 0.9f), 0.1f, Color.WHITE);
         this.uiRenderer.start();
         this.ui.render();

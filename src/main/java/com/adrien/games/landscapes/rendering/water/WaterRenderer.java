@@ -10,16 +10,16 @@ import org.lwjgl.opengl.GL11;
 
 /**
  * Water mesh renderer
+ *
+ * @author adrien
  */
 public class WaterRenderer {
 
-    /**
-     * Water shader.
-     */
+    /** Water shader */
     private final Shader shader;
 
     /**
-     * Constructs the water renderer.
+     * Construct the water renderer
      */
     public WaterRenderer() {
         this.shader = new Shader().addVertexShader("water.vert")
@@ -28,15 +28,15 @@ public class WaterRenderer {
     }
 
     /**
-     * Renders the water mesh.
+     * Render the water mesh
      *
-     * @param waterMesh The mesh to render.
-     * @param width     The width of the rendered mesh.
-     * @param depth     The depth of the rendered mesh.
-     * @param height    The height at which to render the mesh.
-     * @param camera    The camera to use for rendering.
-     * @param ambient   The ambient light of the scene.
-     * @param sun       The sun light og the scene.
+     * @param waterMesh The mesh to render
+     * @param width     The width of the rendered mesh
+     * @param depth     The depth of the rendered mesh
+     * @param height    The height at which to render the mesh
+     * @param camera    The camera to use for rendering
+     * @param ambient   The ambient light of the scene
+     * @param sun       The sun light og the scene
      */
     public void render(final WaterMesh waterMesh, final float width, final float depth, final float height, final Camera camera,
                        final Light ambient, final DirectionalLight sun) {
@@ -55,14 +55,14 @@ public class WaterRenderer {
     }
 
     /**
-     * Sets up shader for rendering.
+     * Set up shader for rendering
      *
-     * @param width   The width of the rendered mesh.
-     * @param depth   The depth of the rendered mesh.
-     * @param height  The height at which to render the mesh.
-     * @param camera  The camera to use for rendering.
-     * @param ambient The ambient light of the scene.
-     * @param sun     The sun light og the scene.
+     * @param width   The width of the rendered mesh
+     * @param depth   The depth of the rendered mesh
+     * @param height  The height at which to render the mesh
+     * @param camera  The camera to use for rendering
+     * @param ambient The ambient light of the scene
+     * @param sun     The sun light og the scene
      */
     private void setUpShader(final float width, final float depth, final float height, final Camera camera, final Light ambient,
                              final DirectionalLight sun) {
@@ -79,7 +79,7 @@ public class WaterRenderer {
     }
 
     /**
-     * Destroys the renderer.
+     * Destroy the renderer
      */
     public void destroy() {
         this.shader.destroy();

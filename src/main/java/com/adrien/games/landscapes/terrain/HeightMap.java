@@ -3,36 +3,30 @@ package com.adrien.games.landscapes.terrain;
 import com.adrien.games.bagl.core.math.Noise;
 
 /**
- * Height map.
+ * Height map
  * <p>
- * 2D map of heights build using Perlin noise algorithm.
+ * 2D map of heights build using Perlin noise algorithm
+ *
+ * @author adrien
  */
 public class HeightMap {
 
-    /**
-     * The width of the map.
-     */
+    /** The width of the map */
     private final int width;
 
-    /**
-     * The depth of the map.
-     */
+    /** The depth of the map */
     private final int depth;
 
-    /**
-     * The scale of heights.
-     */
+    /** The scale of heights */
     private final int scale;
 
-    /**
-     * The heights of the map.
-     */
+    /** The heights of the map */
     private final float[] heights;
 
     /**
-     * Constructs the height map.
+     * Construct the height map
      * <p>
-     * Heights will be generated in the range [0; 1] then scaled by scale parameter.
+     * Heights will be generated in the range [0; 1] then scaled by scale parameter
      *
      * @param parameters The parameters of the height map.
      */
@@ -51,11 +45,11 @@ public class HeightMap {
     }
 
     /**
-     * Gets the height at given coordinates.
+     * Get the height at given coordinates
      *
-     * @param x The x coordinate.
-     * @param z The z coordinate.
-     * @return The height a these coordinates.
+     * @param x The x coordinate
+     * @param z The z coordinate
+     * @return The height a these coordinates
      */
     public float getHeight(final int x, final int z) {
         return this.heights[x * this.depth + z];

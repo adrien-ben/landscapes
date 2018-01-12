@@ -7,32 +7,26 @@ import com.adrien.games.bagl.rendering.BlendMode;
 import com.adrien.games.bagl.rendering.shape.UIRenderer;
 import com.adrien.games.bagl.rendering.text.Font;
 import com.adrien.games.bagl.rendering.text.TextRenderer;
-import com.adrien.games.landscapes.ui.Slider;
+import com.adrien.games.landscapes.ui.controls.Slider;
 import org.lwjgl.opengl.GL11;
 
 /**
- * Renders sliders.
+ * Renders sliders
+ *
+ * @author adrien
  */
 public class SliderRenderer {
 
-    /**
-     * The back color of the slider.
-     */
+    /** The back color of the slider */
     private static final Color BACK_COLOR = new Color(1.0f, 1.0f, 1.0f, 0.3f);
 
-    /**
-     * The color of the slider's selected portion part
-     */
+    /** The color of the slider's selected portion part */
     private static final Color FILL_COLOR = new Color(1.0f, 0.0f, 0.0f, 0.5f);
 
-    /**
-     * The ui renderer.
-     */
+    /** The ui renderer */
     private final UIRenderer uiRenderer;
 
-    /**
-     * The text renderer.
-     */
+    /** The text renderer */
     private final TextRenderer textRenderer;
 
     public SliderRenderer(final UIRenderer uiRenderer, final TextRenderer textRenderer) {
@@ -41,13 +35,13 @@ public class SliderRenderer {
     }
 
     /**
-     * Renders a slider.
+     * Render a slider
      *
-     * @param slider The slider to render.
-     * @param font   The font to use to render text.
+     * @param slider The slider to render
+     * @param font   The font to use to render text
      */
     public void render(final Slider slider, final Font font) {
-        final String text = slider.getId() + " : " + slider.getValue() + " [" + slider.getMin() + "; " + slider.getMax() + "]";
+        final String text = slider.getLabel() + " : " + slider.getValue() + " [" + slider.getMin() + "; " + slider.getMax() + "]";
         this.textRenderer.render(text, font, new Vector2(slider.getX(), slider.getY() + slider.getHeight()), slider.getHeight() * 1.6f, Color.WHITE);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         Engine.setBlendMode(BlendMode.TRANSPARENCY);

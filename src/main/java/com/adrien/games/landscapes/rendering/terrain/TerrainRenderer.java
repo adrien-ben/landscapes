@@ -9,19 +9,19 @@ import com.adrien.games.bagl.rendering.light.Light;
 import org.lwjgl.opengl.GL11;
 
 /**
- * Terrain mesh renderer.
+ * Terrain mesh renderer
  * <p>
- * Renders {@link TerrainMesh}.
+ * Renders {@link TerrainMesh}
+ *
+ * @author adrien
  */
 public class TerrainRenderer {
 
-    /**
-     * The terrain shader.
-     */
+    /** The terrain shader */
     private final Shader shader;
 
     /**
-     * Constructs the renderer.
+     * Construct the renderer
      */
     public TerrainRenderer() {
         this.shader = new Shader()
@@ -31,12 +31,12 @@ public class TerrainRenderer {
     }
 
     /**
-     * Renders a {@link TerrainMesh}.
+     * Renders a {@link TerrainMesh}
      *
-     * @param mesh    The mesh to render.
-     * @param camera  The camera used for rendering.
-     * @param ambient The ambient light of the scene.
-     * @param sun     The sun light of the scene.
+     * @param mesh    The mesh to render
+     * @param camera  The camera used for rendering
+     * @param ambient The ambient light of the scene
+     * @param sun     The sun light of the scene
      */
     public void render(final TerrainMesh mesh, final Camera camera, final Light ambient, final DirectionalLight sun) {
         GL11.glEnable(GL11.GL_CULL_FACE);
@@ -59,7 +59,7 @@ public class TerrainRenderer {
     }
 
     /**
-     * Destroys the renderer.
+     * Destroys the renderer
      */
     public void destroy() {
         this.shader.destroy();
