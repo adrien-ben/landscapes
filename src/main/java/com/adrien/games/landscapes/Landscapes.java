@@ -1,8 +1,9 @@
 package com.adrien.games.landscapes;
 
 import com.adrien.games.bagl.core.*;
-import com.adrien.games.bagl.core.math.Vector2;
-import com.adrien.games.bagl.core.math.Vector3;
+import com.adrien.games.bagl.core.camera.Camera;
+import com.adrien.games.bagl.core.camera.CameraController;
+import com.adrien.games.bagl.core.camera.FPSCameraController;
 import com.adrien.games.bagl.rendering.light.DirectionalLight;
 import com.adrien.games.bagl.rendering.light.Light;
 import com.adrien.games.bagl.rendering.shape.UIRenderer;
@@ -18,6 +19,8 @@ import com.adrien.games.landscapes.terrain.HeightMapParameters;
 import com.adrien.games.landscapes.ui.UI;
 import com.adrien.games.landscapes.ui.controls.CheckBox;
 import com.adrien.games.landscapes.ui.controls.Slider;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -94,10 +97,10 @@ public class Landscapes implements Game {
 
         final Configuration config = Configuration.getInstance();
 
-        this.camera = new Camera(new Vector3(TERRAIN_SIZE / 10, HEIGHT_SCALE * 2, TERRAIN_SIZE / 10), new Vector3(1f, -1f, 1f),
-                new Vector3(0f, 1f, 0f), (float) Math.toRadians(70f), (float) config.getXResolution() / config.getYResolution(),
+        this.camera = new Camera(new Vector3f(TERRAIN_SIZE / 10, HEIGHT_SCALE * 2, TERRAIN_SIZE / 10), new Vector3f(1f, -1f, 1f),
+                new Vector3f(0f, 1f, 0f), (float) Math.toRadians(70f), (float) config.getXResolution() / config.getYResolution(),
                 0.1f, 1000f);
-        this.cameraController = new CameraController(this.camera);
+        this.cameraController = new FPSCameraController(this.camera);
 
         this.terrainRenderer = new TerrainRenderer();
         this.mapParameters = HeightMapParameters.create().width(TERRAIN_SIZE).depth(TERRAIN_SIZE).scale(HEIGHT_SCALE).frequency(0.012f).octaves(6)
@@ -110,7 +113,7 @@ public class Landscapes implements Game {
         this.renderWater = true;
 
         this.ambient = new Light(0.3f, Color.WHITE);
-        this.sun = new DirectionalLight(1f, Color.WHITE, new Vector3(-1f, -1f, -1f));
+        this.sun = new DirectionalLight(1f, Color.WHITE, new Vector3f(-1f, -1f, -1f));
 
         this.textRenderer = new TextRenderer();
         this.uiRenderer = new UIRenderer();
@@ -213,7 +216,7 @@ public class Landscapes implements Game {
         if (this.renderWater) {
             this.waterRenderer.render(this.waterMesh, TERRAIN_SIZE, TERRAIN_SIZE, 46f, this.camera, this.ambient, this.sun);
         }
-        this.textRenderer.render(this.state.toString() + " MODE", this.font, new Vector2(0.0f, 0.9f), 0.1f, Color.WHITE);
+        this.textRenderer.render(this.state.toString() + " MODE", this.font, new Vector2f(0.0f, 0.9f), 0.1f, Color.WHITE);
         this.uiRenderer.start();
         this.ui.render();
         this.uiRenderer.end();

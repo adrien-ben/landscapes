@@ -1,7 +1,7 @@
 package com.adrien.games.landscapes.rendering.water;
 
-import com.adrien.games.bagl.core.Camera;
 import com.adrien.games.bagl.core.Engine;
+import com.adrien.games.bagl.core.camera.Camera;
 import com.adrien.games.bagl.rendering.BlendMode;
 import com.adrien.games.bagl.rendering.Shader;
 import com.adrien.games.bagl.rendering.light.DirectionalLight;

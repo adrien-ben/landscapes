@@ -2,9 +2,9 @@ package com.adrien.games.landscapes.ui.controllers;
 
 import com.adrien.games.bagl.core.Configuration;
 import com.adrien.games.bagl.core.Input;
-import com.adrien.games.bagl.core.math.Vector2;
 import com.adrien.games.landscapes.ui.UIController;
 import com.adrien.games.landscapes.ui.controls.Slider;
+import org.joml.Vector2f;
 
 /**
  * The slider controller is responsible for checking id the slider control
@@ -29,8 +29,8 @@ public class SliderController extends UIController {
 
     @Override
     protected void onClick() {
-        final Vector2 mousePosition = Input.getMousePosition();
-        final float normalizedMouseX = mousePosition.getX() / Configuration.getInstance().getXResolution();
+        final Vector2f mousePosition = Input.getMousePosition();
+        final float normalizedMouseX = mousePosition.x() / Configuration.getInstance().getXResolution();
         final float sliderPercentage = (normalizedMouseX - this.slider.getX()) / slider.getWidth();
         final float exactValue = this.slider.getMin() + (this.slider.getMax() - this.slider.getMin()) * sliderPercentage;
         final float step = this.slider.getStep();

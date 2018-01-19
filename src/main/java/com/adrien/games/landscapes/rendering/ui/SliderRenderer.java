@@ -2,12 +2,12 @@ package com.adrien.games.landscapes.rendering.ui;
 
 import com.adrien.games.bagl.core.Color;
 import com.adrien.games.bagl.core.Engine;
-import com.adrien.games.bagl.core.math.Vector2;
 import com.adrien.games.bagl.rendering.BlendMode;
 import com.adrien.games.bagl.rendering.shape.UIRenderer;
 import com.adrien.games.bagl.rendering.text.Font;
 import com.adrien.games.bagl.rendering.text.TextRenderer;
 import com.adrien.games.landscapes.ui.controls.Slider;
+import org.joml.Vector2f;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -42,7 +42,7 @@ public class SliderRenderer {
      */
     public void render(final Slider slider, final Font font) {
         final String text = slider.getLabel() + " : " + slider.getValue() + " [" + slider.getMin() + "; " + slider.getMax() + "]";
-        this.textRenderer.render(text, font, new Vector2(slider.getX(), slider.getY() + slider.getHeight()), slider.getHeight() * 1.6f, Color.WHITE);
+        this.textRenderer.render(text, font, new Vector2f(slider.getX(), slider.getY() + slider.getHeight()), slider.getHeight() * 1.6f, Color.WHITE);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         Engine.setBlendMode(BlendMode.TRANSPARENCY);
         this.uiRenderer.renderBox(slider.getX(), slider.getY(), slider.getWidth(), slider.getHeight(), BACK_COLOR);

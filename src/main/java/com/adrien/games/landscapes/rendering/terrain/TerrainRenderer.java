@@ -1,7 +1,7 @@
 package com.adrien.games.landscapes.rendering.terrain;
 
-import com.adrien.games.bagl.core.Camera;
 import com.adrien.games.bagl.core.Engine;
+import com.adrien.games.bagl.core.camera.Camera;
 import com.adrien.games.bagl.rendering.BlendMode;
 import com.adrien.games.bagl.rendering.Shader;
 import com.adrien.games.bagl.rendering.light.DirectionalLight;
@@ -31,7 +31,7 @@ public class TerrainRenderer {
     }
 
     /**
-     * Renders a {@link TerrainMesh}
+     * Render a {@link TerrainMesh}
      *
      * @param mesh    The mesh to render
      * @param camera  The camera used for rendering
@@ -59,7 +59,7 @@ public class TerrainRenderer {
     }
 
     /**
-     * Destroys the renderer
+     * Destroy the renderer
      */
     public void destroy() {
         this.shader.destroy();

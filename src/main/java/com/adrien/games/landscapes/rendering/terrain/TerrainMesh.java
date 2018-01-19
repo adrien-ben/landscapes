@@ -1,10 +1,10 @@
 package com.adrien.games.landscapes.rendering.terrain;
 
 import com.adrien.games.bagl.core.Color;
-import com.adrien.games.bagl.core.math.Vector3;
 import com.adrien.games.bagl.rendering.BufferUsage;
 import com.adrien.games.bagl.rendering.vertex.*;
 import com.adrien.games.landscapes.terrain.HeightMap;
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -110,10 +110,10 @@ public class TerrainMesh {
             vertexData.put(i * ELEMENTS_PER_VERTEX + 1, height);
             vertexData.put(i * ELEMENTS_PER_VERTEX + 2, z);
 
-            final Vector3 normal = this.computeVertexNormal(map, x, z);
-            vertexData.put(i * ELEMENTS_PER_VERTEX + 3, normal.getX());
-            vertexData.put(i * ELEMENTS_PER_VERTEX + 4, normal.getY());
-            vertexData.put(i * ELEMENTS_PER_VERTEX + 5, normal.getZ());
+            final Vector3f normal = this.computeVertexNormal(map, x, z);
+            vertexData.put(i * ELEMENTS_PER_VERTEX + 3, normal.x());
+            vertexData.put(i * ELEMENTS_PER_VERTEX + 4, normal.y());
+            vertexData.put(i * ELEMENTS_PER_VERTEX + 5, normal.z());
 
             final Color color = this.computeColor(height, map.getScale());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 6, color.getRed());
@@ -157,8 +157,8 @@ public class TerrainMesh {
      * @param z   The z index of the vertex
      * @return The averaged normal of the vertex
      */
-    private Vector3 computeVertexNormal(final HeightMap map, final int x, final int z) {
-        final Vector3 normal = new Vector3();
+    private Vector3f computeVertexNormal(final HeightMap map, final int x, final int z) {
+        final Vector3f normal = new Vector3f();
         if (x > 0 && z > 0) {
             normal.add(this.computeFaceNormal(map, x, z, -1));
         }
@@ -173,7 +173,7 @@ public class TerrainMesh {
             normal.add(this.computeFaceNormal(map, x, z + 1, -1));
             normal.add(this.computeFaceNormal(map, x - 1, z, 1));
         }
-        return normal.normalise();
+        return normal.normalize();
     }
 
     /**
@@ -185,16 +185,16 @@ public class TerrainMesh {
      * @param offset Amount to offset the current vertex index to create the face
      * @return The computed normal vector
      */
-    private Vector3 computeFaceNormal(final HeightMap map, final int x, final int z, final int offset) {
+    private Vector3f computeFaceNormal(final HeightMap map, final int x, final int z, final int offset) {
         final float height = map.getHeight(x, z);
         final int adjacentX = x + offset;
         final int adjacentZ = z + offset;
         final float adjacentHeightX = map.getHeight(adjacentX, z);
         final float adjacentHeightZ = map.getHeight(x, adjacentZ);
 
-        final Vector3 xVector = new Vector3(offset, adjacentHeightX - height, 0f).normalise();
-        final Vector3 zVector = new Vector3(0f, adjacentHeightZ - height, offset).normalise();
-        return Vector3.cross(zVector, xVector).normalise();
+        final Vector3f xVector = new Vector3f(offset, adjacentHeightX - height, 0f).normalize();
+        final Vector3f zVector = new Vector3f(0f, adjacentHeightZ - height, offset).normalize();
+        return new Vector3f(zVector).cross(xVector).normalize();
     }
 
     /**

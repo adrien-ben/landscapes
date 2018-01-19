@@ -2,12 +2,12 @@ package com.adrien.games.landscapes.rendering.ui;
 
 import com.adrien.games.bagl.core.Color;
 import com.adrien.games.bagl.core.Engine;
-import com.adrien.games.bagl.core.math.Vector2;
 import com.adrien.games.bagl.rendering.BlendMode;
 import com.adrien.games.bagl.rendering.shape.UIRenderer;
 import com.adrien.games.bagl.rendering.text.Font;
 import com.adrien.games.bagl.rendering.text.TextRenderer;
 import com.adrien.games.landscapes.ui.controls.CheckBox;
+import org.joml.Vector2f;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -42,7 +42,7 @@ public class CheckBoxRenderer {
      */
     public void render(final CheckBox checkBox, final Font font) {
         this.textRenderer
-                .render(checkBox.getLabel(), font, new Vector2(checkBox.getX() + checkBox.getWidth(), checkBox.getY()), checkBox.getHeight() * 1f,
+                .render(checkBox.getLabel(), font, new Vector2f(checkBox.getX() + checkBox.getWidth(), checkBox.getY()), checkBox.getHeight() * 1f,
                         Color.WHITE);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         Engine.setBlendMode(BlendMode.TRANSPARENCY);
