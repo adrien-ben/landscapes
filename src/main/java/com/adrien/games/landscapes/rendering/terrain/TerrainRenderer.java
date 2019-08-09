@@ -1,11 +1,12 @@
 package com.adrien.games.landscapes.rendering.terrain;
 
-import com.adrien.games.bagl.core.Engine;
-import com.adrien.games.bagl.core.camera.Camera;
-import com.adrien.games.bagl.rendering.BlendMode;
-import com.adrien.games.bagl.rendering.Shader;
-import com.adrien.games.bagl.rendering.light.DirectionalLight;
-import com.adrien.games.bagl.rendering.light.Light;
+import com.adrienben.games.bagl.core.io.ResourcePath;
+import com.adrienben.games.bagl.engine.camera.Camera;
+import com.adrienben.games.bagl.engine.rendering.light.DirectionalLight;
+import com.adrienben.games.bagl.engine.rendering.light.Light;
+import com.adrienben.games.bagl.opengl.BlendMode;
+import com.adrienben.games.bagl.opengl.OpenGL;
+import com.adrienben.games.bagl.opengl.shader.Shader;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -17,17 +18,16 @@ import org.lwjgl.opengl.GL11;
  */
 public class TerrainRenderer {
 
-    /** The terrain shader */
     private final Shader shader;
 
     /**
      * Construct the renderer
      */
     public TerrainRenderer() {
-        this.shader = new Shader()
-                .addVertexShader("terrain.vert")
-                .addFragmentShader("terrain.frag")
-                .compile();
+        this.shader = Shader.pipelineBuilder()
+                .vertexPath(ResourcePath.get("classpath:/shaders/terrain.vert"))
+                .fragmentPath(ResourcePath.get("classpath:/shaders/terrain.frag"))
+                .build();
     }
 
     /**
@@ -41,7 +41,7 @@ public class TerrainRenderer {
     public void render(final TerrainMesh mesh, final Camera camera, final Light ambient, final DirectionalLight sun) {
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-        Engine.setBlendMode(BlendMode.DEFAULT);
+        OpenGL.setBlendMode(BlendMode.DEFAULT);
 
         this.shader.bind();
         this.shader.setUniform("uVP", camera.getViewProj());

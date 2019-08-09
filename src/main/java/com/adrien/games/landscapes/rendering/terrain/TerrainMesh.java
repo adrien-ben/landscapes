@@ -1,9 +1,10 @@
 package com.adrien.games.landscapes.rendering.terrain;
 
-import com.adrien.games.bagl.core.Color;
-import com.adrien.games.bagl.rendering.BufferUsage;
-import com.adrien.games.bagl.rendering.vertex.*;
+
 import com.adrien.games.landscapes.terrain.HeightMap;
+import com.adrienben.games.bagl.core.Color;
+import com.adrienben.games.bagl.opengl.buffer.BufferUsage;
+import com.adrienben.games.bagl.opengl.vertex.*;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
@@ -20,52 +21,23 @@ import java.nio.IntBuffer;
  */
 public class TerrainMesh {
 
-    /** Number of elements in one vertex */
     private static final int ELEMENTS_PER_VERTEX = 9;
-
-    /** Number of elements per positions */
     private static final int ELEMENTS_PER_POSITION = 3;
-
-    /** Number of elements per normal */
     private static final int ELEMENTS_PER_NORMAL = 3;
-
-    /** Number of elements per color */
     private static final int ELEMENTS_PER_COLOR = 3;
-
-    /** Index of the positions in the vertex array */
     private static final int POSITION_ELEMENTS_INDEX = 0;
-
-    /** Index of the normals in the vertex array */
     private static final int NORMAL_ELEMENTS_INDEX = 1;
-
-    /** Index of the colors in the vertex array */
     private static final int COLOR_ELEMENTS_INDEX = 2;
-
-    /** Number of indices per polygons */
     public static final int INDICES_PER_POLYGON = 3;
 
-    /** Water color */
     private static final Color SAND = new Color(0.93f, 0.79f, 0.69f);
-
-    /** Grass color */
     private static final Color GRASS = new Color(0.2f, 0.5f, 0.0f);
-
-    /** Dirt color */
     private static final Color DIRT = new Color(0.61f, 0.46f, 0.32f);
-
-    /** Snow color */
     private static final Color SNOW = new Color(1.0f, 1.0f, 1.0f);
 
-    /** Vertex array */
     private final VertexArray vArray;
-
-    /** Vertex buffer */
     private final VertexBuffer vBuffer;
-
-    /** Index buffer */
     private final IndexBuffer iBuffer;
-
-    /** The number of polygon composing the terrain */
     private final int polygonCount;
 
     /**
@@ -76,11 +48,11 @@ public class TerrainMesh {
     public TerrainMesh(final HeightMap map) {
         this.polygonCount = (map.getWidth() - 1) * (map.getDepth() - 1) * 2;
 
-        final FloatBuffer vertexData = this.generateVertexData(map);
-        this.vBuffer = new VertexBuffer(vertexData, new VertexBufferParams()
+        final var vertexData = this.generateVertexData(map);
+        this.vBuffer = new VertexBuffer(vertexData, VertexBufferParams.builder()
                 .element(new VertexElement(POSITION_ELEMENTS_INDEX, ELEMENTS_PER_POSITION))
                 .element(new VertexElement(NORMAL_ELEMENTS_INDEX, ELEMENTS_PER_NORMAL))
-                .element(new VertexElement(COLOR_ELEMENTS_INDEX, ELEMENTS_PER_COLOR)));
+                .element(new VertexElement(COLOR_ELEMENTS_INDEX, ELEMENTS_PER_COLOR)).build());
         MemoryUtil.memFree(vertexData);
 
         this.vArray = new VertexArray();
@@ -88,7 +60,7 @@ public class TerrainMesh {
         this.vArray.attachVertexBuffer(this.vBuffer);
         this.vArray.unbind();
 
-        final IntBuffer indexData = this.generateIndexData(map);
+        final var indexData = this.generateIndexData(map);
         this.iBuffer = new IndexBuffer(indexData, BufferUsage.STATIC_DRAW);
         MemoryUtil.memFree(indexData);
     }
@@ -101,7 +73,7 @@ public class TerrainMesh {
      */
     private FloatBuffer generateVertexData(final HeightMap map) {
         final int vertexCount = map.getWidth() * map.getDepth();
-        final FloatBuffer vertexData = MemoryUtil.memAllocFloat(vertexCount * ELEMENTS_PER_VERTEX);
+        final var vertexData = MemoryUtil.memAllocFloat(vertexCount * ELEMENTS_PER_VERTEX);
         for (int i = 0; i < vertexCount; i++) {
             final int x = i / map.getDepth();
             final int z = i % map.getDepth();
@@ -110,12 +82,12 @@ public class TerrainMesh {
             vertexData.put(i * ELEMENTS_PER_VERTEX + 1, height);
             vertexData.put(i * ELEMENTS_PER_VERTEX + 2, z);
 
-            final Vector3f normal = this.computeVertexNormal(map, x, z);
+            final var normal = this.computeVertexNormal(map, x, z);
             vertexData.put(i * ELEMENTS_PER_VERTEX + 3, normal.x());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 4, normal.y());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 5, normal.z());
 
-            final Color color = this.computeColor(height, map.getScale());
+            final var color = this.computeColor(height, map.getScale());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 6, color.getRed());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 7, color.getGreen());
             vertexData.put(i * ELEMENTS_PER_VERTEX + 8, color.getBlue());
@@ -130,7 +102,7 @@ public class TerrainMesh {
      * @return he generated buffer
      */
     private IntBuffer generateIndexData(final HeightMap map) {
-        final IntBuffer indexData = MemoryUtil.memAllocInt(this.polygonCount * INDICES_PER_POLYGON);
+        final var indexData = MemoryUtil.memAllocInt(this.polygonCount * INDICES_PER_POLYGON);
         int nextIndex = 0;
         for (int x = 0; x < map.getWidth() - 1; x++) {
             for (int z = 0; z < map.getDepth() - 1; z++) {
@@ -158,7 +130,7 @@ public class TerrainMesh {
      * @return The averaged normal of the vertex
      */
     private Vector3f computeVertexNormal(final HeightMap map, final int x, final int z) {
-        final Vector3f normal = new Vector3f();
+        final var normal = new Vector3f();
         if (x > 0 && z > 0) {
             normal.add(this.computeFaceNormal(map, x, z, -1));
         }
@@ -192,8 +164,8 @@ public class TerrainMesh {
         final float adjacentHeightX = map.getHeight(adjacentX, z);
         final float adjacentHeightZ = map.getHeight(x, adjacentZ);
 
-        final Vector3f xVector = new Vector3f(offset, adjacentHeightX - height, 0f).normalize();
-        final Vector3f zVector = new Vector3f(0f, adjacentHeightZ - height, offset).normalize();
+        final var xVector = new Vector3f(offset, adjacentHeightX - height, 0f).normalize();
+        final var zVector = new Vector3f(0f, adjacentHeightZ - height, offset).normalize();
         return new Vector3f(zVector).cross(xVector).normalize();
     }
 
@@ -214,7 +186,7 @@ public class TerrainMesh {
         }
         if (height < sandLimit + transitionHeight) {
             final float blendFactor = (height - sandLimit) / transitionHeight;
-            final Color blended = new Color(0f, 0f, 0f);
+            final var blended = new Color(0f, 0f, 0f);
             Color.blend(GRASS, SAND, blendFactor, blended);
             return blended;
         }
@@ -223,7 +195,7 @@ public class TerrainMesh {
         }
         if (height < grassLimit + transitionHeight) {
             final float blendFactor = (height - grassLimit) / transitionHeight;
-            final Color blended = new Color(0f, 0f, 0f);
+            final var blended = new Color(0f, 0f, 0f);
             Color.blend(DIRT, GRASS, blendFactor, blended);
             return blended;
         }
@@ -232,7 +204,7 @@ public class TerrainMesh {
         }
         if (height < dirtLimit + transitionHeight) {
             final float blendFactor = (height - dirtLimit) / transitionHeight;
-            final Color blended = new Color(0f, 0f, 0f);
+            final var blended = new Color(0f, 0f, 0f);
             Color.blend(SNOW, DIRT, blendFactor, blended);
             return blended;
         }

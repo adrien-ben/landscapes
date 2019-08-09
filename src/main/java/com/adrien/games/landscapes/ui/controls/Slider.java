@@ -1,7 +1,7 @@
 package com.adrien.games.landscapes.ui.controls;
 
-import com.adrien.games.bagl.utils.MathUtils;
 import com.adrien.games.landscapes.ui.UIControl;
+import com.adrienben.games.bagl.core.math.MathUtils;
 
 /**
  * A slider is a ui control that has value that is contained
@@ -11,16 +11,9 @@ import com.adrien.games.landscapes.ui.UIControl;
  */
 public class Slider extends UIControl {
 
-    /** The minimum value */
     private final float min;
-
-    /** The maximum value */
     private final float max;
-
-    /** The step used to increment/decrement the value */
     private final float step;
-
-    /** The current value */
     private float value;
 
     public Slider(final String id, final String label, final float x, final float y, final float width, final float height, final float min,

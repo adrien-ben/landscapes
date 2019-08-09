@@ -1,6 +1,7 @@
 package com.adrien.games.landscapes.terrain;
 
-import com.adrien.games.bagl.core.math.Noise;
+
+import com.adrienben.games.bagl.core.math.Noise;
 
 /**
  * Height map
@@ -11,16 +12,24 @@ import com.adrien.games.bagl.core.math.Noise;
  */
 public class HeightMap {
 
-    /** The width of the map */
+    /**
+     * The width of the map
+     */
     private final int width;
 
-    /** The depth of the map */
+    /**
+     * The depth of the map
+     */
     private final int depth;
 
-    /** The scale of heights */
+    /**
+     * The scale of heights
+     */
     private final int scale;
 
-    /** The heights of the map */
+    /**
+     * The heights of the map
+     */
     private final float[] heights;
 
     /**

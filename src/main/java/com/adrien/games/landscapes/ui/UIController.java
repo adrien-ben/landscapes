@@ -1,8 +1,7 @@
 package com.adrien.games.landscapes.ui;
 
-import com.adrien.games.bagl.core.Configuration;
-import com.adrien.games.bagl.core.Input;
-import org.joml.Vector2f;
+import com.adrienben.games.bagl.engine.Configuration;
+import com.adrienben.games.bagl.engine.Input;
 import org.lwjgl.glfw.GLFW;
 
 public abstract class UIController {
@@ -15,8 +14,8 @@ public abstract class UIController {
 
     public void update() {
         if (Input.wasMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
-            final Vector2f mousePosition = Input.getMousePosition();
-            final Configuration config = Configuration.getInstance();
+            final var mousePosition = Input.getMousePosition();
+            final var config = Configuration.getInstance();
             final int xResolution = config.getXResolution();
             final int yResolution = config.getYResolution();
             final int left = (int) (this.control.getX() * xResolution);

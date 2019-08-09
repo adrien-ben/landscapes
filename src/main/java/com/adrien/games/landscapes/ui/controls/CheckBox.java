@@ -9,7 +9,6 @@ import com.adrien.games.landscapes.ui.UIControl;
  */
 public class CheckBox extends UIControl {
 
-    /** Is the value selected */
     private boolean checked;
 
     public CheckBox(final String id, final String label, final float x, final float y, final float size, final boolean checked) {

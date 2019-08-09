@@ -7,22 +7,11 @@ package com.adrien.games.landscapes.ui;
  */
 public abstract class UIControl {
 
-    /** Id of the control */
     private final String id;
-
-    /** Label of the control */
     private String label;
-
-    /** X position of the control */
     private final float x;
-
-    /** Y position of the control */
     private final float y;
-
-    /** Width of the control */
     private final float width;
-
-    /** Height of the control */
     private final float height;
 
     /**

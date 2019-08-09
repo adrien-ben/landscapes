@@ -19,25 +19,39 @@ package com.adrien.games.landscapes.terrain;
  */
 public class HeightMapParameters {
 
-    /** The width of the map */
+    /**
+     * The width of the map
+     */
     private int width = 10;
 
-    /** The depth of the map */
+    /**
+     * The depth of the map
+     */
     private int depth = 10;
 
-    /** The scale of the height of the map */
+    /**
+     * The scale of the height of the map
+     */
     private int scale = 1;
 
-    /** The frequency of generation */
+    /**
+     * The frequency of generation
+     */
     private float frequency = 0.01f;
 
-    /** The number of octaves of generation */
+    /**
+     * The number of octaves of generation
+     */
     private int octaves = 1;
 
-    /** The persistence of the generation */
+    /**
+     * The persistence of the generation
+     */
     private float persistence = 1;
 
-    /** The exponent use to alter the generated heights */
+    /**
+     * The exponent use to alter the generated heights
+     */
     private float exponent = 1;
 
     /**

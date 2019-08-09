@@ -1,8 +1,6 @@
 package com.adrien.games.landscapes.ui;
 
-import com.adrien.games.bagl.rendering.shape.UIRenderer;
-import com.adrien.games.bagl.rendering.text.Font;
-import com.adrien.games.bagl.rendering.text.TextRenderer;
+
 import com.adrien.games.landscapes.rendering.ui.CheckBoxRenderer;
 import com.adrien.games.landscapes.rendering.ui.SliderRenderer;
 import com.adrien.games.landscapes.ui.controllers.CheckBoxController;
@@ -11,6 +9,9 @@ import com.adrien.games.landscapes.ui.controllers.SliderController;
 import com.adrien.games.landscapes.ui.controllers.SliderListener;
 import com.adrien.games.landscapes.ui.controls.CheckBox;
 import com.adrien.games.landscapes.ui.controls.Slider;
+import com.adrienben.games.bagl.engine.rendering.shape.UIRenderer;
+import com.adrienben.games.bagl.engine.rendering.text.Font;
+import com.adrienben.games.bagl.engine.rendering.text.TextRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,22 +25,11 @@ import java.util.List;
  */
 public class UI {
 
-    /** The slider renderer */
     private final SliderRenderer sliderRenderer;
-
-    /** The checkbox renderer */
     private final CheckBoxRenderer checkBoxRenderer;
-
-    /** The renderer's font */
     private final Font font;
-
-    /** The sliders */
     private final List<Slider> sliders;
-
-    /** The checkboxes */
     private final List<CheckBox> checkBoxes;
-
-    /** UI controllers */
     private final List<UIController> controllers;
 
     /**

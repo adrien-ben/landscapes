@@ -1,13 +1,13 @@
 package com.adrien.games.landscapes.rendering.ui;
 
-import com.adrien.games.bagl.core.Color;
-import com.adrien.games.bagl.core.Engine;
-import com.adrien.games.bagl.rendering.BlendMode;
-import com.adrien.games.bagl.rendering.shape.UIRenderer;
-import com.adrien.games.bagl.rendering.text.Font;
-import com.adrien.games.bagl.rendering.text.TextRenderer;
 import com.adrien.games.landscapes.ui.controls.Slider;
-import org.joml.Vector2f;
+import com.adrienben.games.bagl.core.Color;
+import com.adrienben.games.bagl.engine.rendering.shape.UIRenderer;
+import com.adrienben.games.bagl.engine.rendering.text.Font;
+import com.adrienben.games.bagl.engine.rendering.text.Text;
+import com.adrienben.games.bagl.engine.rendering.text.TextRenderer;
+import com.adrienben.games.bagl.opengl.BlendMode;
+import com.adrienben.games.bagl.opengl.OpenGL;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -17,16 +17,10 @@ import org.lwjgl.opengl.GL11;
  */
 public class SliderRenderer {
 
-    /** The back color of the slider */
     private static final Color BACK_COLOR = new Color(1.0f, 1.0f, 1.0f, 0.3f);
-
-    /** The color of the slider's selected portion part */
     private static final Color FILL_COLOR = new Color(1.0f, 0.0f, 0.0f, 0.5f);
 
-    /** The ui renderer */
     private final UIRenderer uiRenderer;
-
-    /** The text renderer */
     private final TextRenderer textRenderer;
 
     public SliderRenderer(final UIRenderer uiRenderer, final TextRenderer textRenderer) {
@@ -41,10 +35,11 @@ public class SliderRenderer {
      * @param font   The font to use to render text
      */
     public void render(final Slider slider, final Font font) {
-        final String text = slider.getLabel() + " : " + slider.getValue() + " [" + slider.getMin() + "; " + slider.getMax() + "]";
-        this.textRenderer.render(text, font, new Vector2f(slider.getX(), slider.getY() + slider.getHeight()), slider.getHeight() * 1.6f, Color.WHITE);
+        final var textContent = slider.getLabel() + " : " + slider.getValue() + " [" + slider.getMin() + "; " + slider.getMax() + "]";
+        final var text = Text.create(textContent, font, slider.getX(), slider.getY() + slider.getHeight(), slider.getHeight() * 1.6f, Color.WHITE);
+        this.textRenderer.render(text);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        Engine.setBlendMode(BlendMode.TRANSPARENCY);
+        OpenGL.setBlendMode(BlendMode.TRANSPARENCY);
         this.uiRenderer.renderBox(slider.getX(), slider.getY(), slider.getWidth(), slider.getHeight(), BACK_COLOR);
         final float range = slider.getMax() - slider.getMin();
         final float advance = slider.getValue() - slider.getMin();
