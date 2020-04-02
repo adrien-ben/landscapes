@@ -14,9 +14,9 @@
     <properties>
         <!-- Dependencies versions -->
         <bagl.version>0.0.6</bagl.version>
-        <java.version>12</java.version>
+        <java.version>14</java.version>
         <!-- Plugins versions -->
-        <maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
     </properties>
 
     <dependencies>
